@@ -101,7 +101,7 @@ export const DEMO_PLANS = [
     amount: 90000,
     duration: 30,
     currency: "NGN",
-    description: "Everything in Starter Pack",
+    description: "Everything in Starter Plan",
     features: {
       "Leads Management": "✓",
       "5,000 ChatBot Sessions": "✓",
@@ -120,7 +120,7 @@ export const DEMO_PLANS = [
     amount: 240000,
     duration: 30,
     currency: "NGN",
-    description: "Everything in Growth Pack",
+    description: "Everything in Growth Plan",
     features: {
       "Flow Automation": "✓",
       "10,000 ChatBot Sessions": "✓",
@@ -144,6 +144,7 @@ export interface PLAN {
   features: Record<string, string> | string[]
   isActive?: boolean
   description?: string
+  isPopular?: boolean
 }
 
 export const getDemoPlans = (): PLAN[] => [

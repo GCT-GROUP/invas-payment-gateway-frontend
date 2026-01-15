@@ -44,14 +44,22 @@ export default function PricingPage() {
     }
   }
 
-  const getYearlyPrice = (monthlyPrice: number): number => {
-    return Math.floor(monthlyPrice * 10) // 17% discount for yearly
+  const getYearlyPrice = (monthlyPrice: number | string): number => {
+    // Convert to number if it's a string
+    const numericPrice = typeof monthlyPrice === 'string' ? parseFloat(monthlyPrice) : monthlyPrice
+    
+    // Return 0 if invalid, otherwise calculate yearly with 17% discount
+    if (isNaN(numericPrice)) return 0
+    return Math.floor(numericPrice * 10) // 17% discount for yearly
   }
 
   const handleSelectPlan = (plan: PLAN) => {
+    const baseAmount = typeof plan.amount === 'string' ? parseFloat(plan.amount) : plan.amount
+    const finalAmount = billingPeriod === "yearly" ? getYearlyPrice(plan.amount) : baseAmount
+    
     setSelectedPlan({
       ...plan,
-      amount: billingPeriod === "yearly" ? getYearlyPrice(plan.amount) : plan.amount,
+      amount: finalAmount,
     })
     setShowPayment(true)
   }
@@ -94,7 +102,7 @@ export default function PricingPage() {
               <PricingCard
                 key={plan.id}
                 plan={plan}
-                isPopular={index === 1}
+                isPopular={plan.isPopular}
                 onSelect={() => handleSelectPlan(plan)}
                 billingPeriod={billingPeriod}
                 yearlyPrice={getYearlyPrice(plan.amount)}

@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       fullName,
       status: "success",
       amount: metadata?.amount,
-      currency: "USD",
+      currency: "NGN",
       timestamp: new Date().toISOString(),
     }
 

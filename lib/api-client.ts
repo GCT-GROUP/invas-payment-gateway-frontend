@@ -34,6 +34,52 @@ export interface PaymentVerifyResponse {
   message: string
 }
 
+export interface CustomerVerifyResponse {
+  success: boolean
+  data?: {
+    id: string
+    externalUserId: string
+    externalCustomerId: string
+    name: string
+    firstName: string
+    lastName: string
+    company: string
+    email: string
+    phone: string
+    address: string
+    companyName: string
+    currentPlanId: string
+    metadata: string
+    createdAt: string
+    updatedAt: string
+  }
+  message: string
+}
+
+
+export async function fetchCustomer(userId: string): Promise<CustomerVerifyResponse>{
+  try {
+    const response = await fetch(`${API_BASE_URL}/customers/user/${userId}`, {
+      method: "GET",
+      headers: {
+        "X-API-Key": API_KEY || "",
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch customer")
+    }
+
+    const data = await response.json()
+    return data || []
+
+  } catch (error) {
+    console.error("invas Error fetching customer:", error)
+    throw error
+  }
+}
+
 export async function fetchPlans(): Promise<Plan[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/plans`, {

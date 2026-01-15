@@ -1,45 +1,68 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
-import { X, Loader } from "lucide-react"
+import { useState, useEffect } from "react"
+import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { initiatePayment } from "@/lib/api-client"
+import { PLAN } from "@/lib/constants"
 
-interface Plan {
-  id: string
-  externalPlanId: string
-  name: string
-  amount: number
-  currency: string
+interface UserData {
+  firstName?: string
+  lastName?: string
+  company?: string
+  email?: string
+  address?: string
+  phone?: string
 }
 
 interface PaymentModalProps {
-  plan: Plan
+  plan: PLAN
+  billing: string
   onClose: () => void
   onSuccess: (transactionId: string) => void
+  userId?: string
+  userData?: UserData
 }
 
-export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalProps) {
+export default function PaymentModal({ 
+  plan, 
+  billing,
+  onClose, 
+  onSuccess,
+  userId,
+  userData 
+}: PaymentModalProps) {
+  const [formData, setFormData] = useState({
+    firstName: userData?.firstName || "",
+    lastName: userData?.lastName || "",
+    email: userData?.email || "",
+    phone: userData?.phone || "",
+    company: userData?.company || "",
+    address: userData?.address || "",
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [formData, setFormData] = useState({
-    email: "",
-    fullName: "",
-    cardNumber: "",
-    expiryDate: "",
-    cvv: "",
-    userId: "user_" + Date.now(),
-  })
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }))
+  // Pre-fill form if userData is provided
+  useEffect(() => {
+    if (userData) {
+      setFormData({
+        firstName: userData.firstName || "",
+        lastName: userData.lastName || "",
+        email: userData.email || "",
+        phone: userData.phone || "",
+        company: userData.company || "",
+        address: userData.address || "",
+      })
+    }
+  }, [userData])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,26 +71,37 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
     setError(null)
 
     try {
-      const response = await initiatePayment(formData.userId, plan.externalPlanId || plan.id, {
-        source: "web",
-        planName: plan.name,
+      // Include userId in the payment request if provided
+      const paymentData = {
+        ...formData,
+        planId: plan.id,
         amount: plan.amount,
-        email: formData.email,
-        fullName: formData.fullName,
-      })
-
-      if (!response.success || !response.data?.transactionId) {
-        throw new Error(response.message || "Payment initiation failed. Please try again.")
+        userId: userId, // Include userId from URL params
       }
 
-      const transactionId = response.data.transactionId
-      console.log("invas Payment initiated with transaction ID:", transactionId)
+      // Make API call to initiate payment
+      const response = await fetch("/api/payments/initiate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(paymentData),
+      })
 
-      // Call success callback
-      onSuccess(transactionId)
-    } catch (err) {
-      console.error("invas Payment error:", err)
-      setError(err instanceof Error ? err.message : "An error occurred. Please try again.")
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Payment initiation failed")
+      }
+
+      // Redirect to payment gateway or handle success
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl
+      } else {
+        onSuccess(data.transactionId)
+      }
+    } catch (err: any) {
+      setError(err.message || "Something went wrong")
     } finally {
       setLoading(false)
     }
@@ -75,115 +109,141 @@ export default function PaymentModal({ plan, onClose, onSuccess }: PaymentModalP
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-card border rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-card border dark:border-primary rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-card border-b border-border p-6 flex justify-between items-center">
+        <div className="sticky top-0 bg-card border-b dark:border-primary p-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-foreground">Complete Payment</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        {/* Content */}
         <div className="p-6">
           {/* Plan Summary */}
-          <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 mb-6">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-muted-foreground">{plan.name} Plan</span>
-              <span className="font-bold text-lg text-accent">
-                {plan.amount.toLocaleString()} {plan.currency}
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground">Billed monthly</p>
+          <div className="bg-accent/10 border border-accent rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-foreground mb-2">{plan.name}</h3>
+            <p className="text-2xl font-bold text-accent">
+              ₦{typeof plan.amount === 'number' ? plan.amount.toLocaleString() : plan.amount}
+            </p>
+            <p className="text-sm text-foreground mt-1">Billed {billing}</p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <div className="bg-destructive/10 border border-destructive text-destructive p-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
+          {/* Show user ID if provided */}
+          {/* {userId && (
+            <div className="mb-4 p-3 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">User ID: {userId}</p>
+            </div>
+          )} */}
 
-            <div>
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                id="fullName"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                placeholder="John Doe"
-                required
-              />
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <p className="text-sm text-destructive">{error}</p>
+            </div>
+          )}
+
+          {/* Payment Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                  className="border-[#0059c6]"
+                  disabled={!!userData?.firstName} // Disable if pre-filled
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                  className="border-[#0059c6]"
+                  disabled={!!userData?.lastName}
+                />
+              </div>
             </div>
 
-            <div>
-              <Label htmlFor="email">Email Address</Label>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
                 value={formData.email}
-                onChange={handleInputChange}
-                placeholder="john@example.com"
+                onChange={handleChange}
                 required
+                className="border-[#0059c6]"
+                disabled={!!userData?.email}
               />
             </div>
 
-            <div>
-              <Label htmlFor="cardNumber">Card Number</Label>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="phone">Phone Number</Label>
               <Input
-                id="cardNumber"
-                name="cardNumber"
-                value={formData.cardNumber}
-                onChange={handleInputChange}
-                placeholder="4242 4242 4242 4242"
-                // maxLength="19"
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
                 required
+                className="border-[#0059c6]"
+                disabled={!!userData?.phone}
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="expiryDate">Expiry Date</Label>
-                <Input
-                  id="expiryDate"
-                  name="expiryDate"
-                  value={formData.expiryDate}
-                  onChange={handleInputChange}
-                  placeholder="MM/YY"
-                  // maxLength="5"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="cvv">CVV</Label>
-                <Input
-                  id="cvv"
-                  name="cvv"
-                  value={formData.cvv}
-                  onChange={handleInputChange}
-                  placeholder="123"
-                  // maxLength="4"
-                  required
-                />
-              </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="company">Company (Optional)</Label>
+              <Input
+                id="company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                className="border-[#0059c6]"
+                disabled={!!userData?.company}
+              />
             </div>
 
-            <Button type="submit" disabled={loading} className="w-full bg-accent hover:bg-accent/90 text-primary h-12">
-              {loading ? (
-                <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                `Pay ₦${plan.amount}`
-              )}
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="address">Address (Optional)</Label>
+              <Input
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                className="border-[#0059c6]"
+                disabled={!!userData?.address}
+              />
+            </div>
 
-            <p className="text-xs text-muted-foreground text-center">
-              Your payment information is secure and encrypted
-            </p>
+            <div className="flex gap-4 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-accent hover:bg-accent/90 text-primary"
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Proceed to Payment"}
+              </Button>
+            </div>
           </form>
         </div>
       </div>

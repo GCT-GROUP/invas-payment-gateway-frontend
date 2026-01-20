@@ -8,13 +8,7 @@ import { Button } from "@/components/ui/button"
 import { verifyPayment } from "@/lib/api-client"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-
-interface PaymentDetails {
-  transactionId: string
-  status: string
-  amount: number
-  planId: string
-}
+import { PaymentDetails } from "@/lib/types"
 
 export default function SuccessPage() {
   const searchParams = useSearchParams()

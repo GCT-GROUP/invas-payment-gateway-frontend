@@ -6,15 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PLAN } from "@/lib/constants"
-
-interface UserData {
-  firstName?: string
-  lastName?: string
-  company?: string
-  email?: string
-  address?: string
-  phone?: string
-}
+import { UserData } from "@/lib/types"
 
 interface PaymentModalProps {
   plan: PLAN

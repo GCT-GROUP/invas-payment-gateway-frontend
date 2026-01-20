@@ -1,68 +1,38 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api"
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY
+import { API_CONFIG } from "./constants"
+import { Plan, 
+  PaymentInitiateResponse, 
+  PaymentVerifyResponse, 
+  CustomerVerifyResponse, 
+  ValidateTokenResponse 
+} from "./types"
 
-export interface Plan {
-  id: string
-  externalPlanId: string
-  name: string
-  amount: number
-  currency: string
-  duration: number
-  features: Record<string, string>
-  isActive: boolean
-  description?: string
-}
+export async function validateToken(token:string): Promise<ValidateTokenResponse>{
+  try {
+    const response = await fetch(`${API_CONFIG.PC_BASE_URL}/validate/${token}`, {
+      method: "GET",
+      headers: {
+        "X-API-Key": API_CONFIG.PC_API_KEY || "",
+        "Content-Type": "application/json",
+      },
+    })
 
-export interface PaymentInitiateResponse {
-  success: boolean
-  data: {
-    transactionId: string
-    paymentUrl?: string
-    status: string
+    if (!response.ok) {
+      throw new Error("Failed to validate token")
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error("invas Error validating token:", error)
+    throw error
   }
-  message: string
 }
-
-export interface PaymentVerifyResponse {
-  success: boolean
-  data: {
-    transactionId: string
-    status: string
-    amount: number
-    planId: string
-  }
-  message: string
-}
-
-export interface CustomerVerifyResponse {
-  success: boolean
-  data?: {
-    id: string
-    externalUserId: string
-    externalCustomerId: string
-    name: string
-    firstName: string
-    lastName: string
-    company: string
-    email: string
-    phone: string
-    address: string
-    companyName: string
-    currentPlanId: string
-    metadata: string
-    createdAt: string
-    updatedAt: string
-  }
-  message: string
-}
-
 
 export async function fetchCustomer(userId: string): Promise<CustomerVerifyResponse>{
   try {
-    const response = await fetch(`${API_BASE_URL}/customers/user/${userId}`, {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/customers/user/${userId}`, {
       method: "GET",
       headers: {
-        "X-API-Key": API_KEY || "",
+        "X-API-Key": API_CONFIG.API_KEY || "",
         "Content-Type": "application/json",
       },
     })
@@ -82,10 +52,10 @@ export async function fetchCustomer(userId: string): Promise<CustomerVerifyRespo
 
 export async function fetchPlans(): Promise<Plan[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/plans`, {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/plans`, {
       method: "GET",
       headers: {
-        "X-API-Key": API_KEY || "",
+        "X-API-Key": API_CONFIG.API_KEY || "",
         "Content-Type": "application/json",
       },
     })
@@ -108,10 +78,10 @@ export async function initiatePayment(
   metadata?: Record<string, any>,
 ): Promise<PaymentInitiateResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/payments/initiate`, {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/payments/initiate`, {
       method: "POST",
       headers: {
-        "X-API-Key": API_KEY || "",
+        "X-API-Key": API_CONFIG.API_KEY || "",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -134,10 +104,10 @@ export async function initiatePayment(
 
 export async function verifyPayment(transactionId: string): Promise<PaymentVerifyResponse> {
   try {
-    const response = await fetch(`${API_BASE_URL}/payments/verify/${transactionId}`, {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/payments/verify/${transactionId}`, {
       method: "GET",
       headers: {
-        "X-API-Key": API_KEY || "",
+        "X-API-Key": API_CONFIG.API_KEY || "",
         "Content-Type": "application/json",
       },
     })

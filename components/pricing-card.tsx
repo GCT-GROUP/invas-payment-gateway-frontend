@@ -9,6 +9,8 @@ interface PricingCardProps {
   onSelect: () => void
   billingPeriod: "monthly" | "yearly"
   yearlyPrice?: number
+  disabled?: boolean
+  isSelected?: boolean
 }
 
 export default function PricingCard({ 
@@ -16,7 +18,9 @@ export default function PricingCard({
   isPopular, 
   onSelect, 
   billingPeriod, 
-  yearlyPrice 
+  yearlyPrice,
+  disabled,
+  isSelected = false
 }: PricingCardProps) {
   const featureList = Array.isArray(plan.features) ? plan.features : Object.keys(plan.features)
 
@@ -72,6 +76,7 @@ export default function PricingCard({
               ? "bg-primary hover:bg-primary/90 text-primary-foreground"
               : "bg-accent hover:bg-accent/90 text-primary"
           }`}
+          disabled={disabled}
         >
           Select Plan
         </Button>

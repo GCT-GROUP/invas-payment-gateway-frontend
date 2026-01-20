@@ -15,6 +15,16 @@ export interface Plan {
   description?: string
 }
 
+export interface UserData {
+  firstName?: string
+  lastName?: string
+  company?: string
+  email?: string
+  address?: string
+  phone?: string
+  planId?: string
+}
+
 export interface PricingTier {
   id: string
   name: string
@@ -53,6 +63,69 @@ export interface PaymentVerifyResponse {
   message: string
 }
 
+// export interface PaymentInitiateResponse {
+//   success: boolean
+//   data: {
+//     transactionId: string
+//     paymentUrl?: string
+//     status: string
+//   }
+//   message: string
+// }
+
+// export interface PaymentVerifyResponse {
+//   success: boolean
+//   data: {
+//     transactionId: string
+//     status: string
+//     amount: number
+//     planId: string
+//   }
+//   message: string
+// }
+
+export interface CustomerVerifyResponse {
+  success: boolean
+  data?: {
+    id: string
+    externalUserId: string
+    externalCustomerId: string
+    name: string
+    firstName: string
+    lastName: string
+    company: string
+    email: string
+    phone: string
+    address: string
+    companyName: string
+    currentPlanId: string
+    metadata: string
+    createdAt: string
+    updatedAt: string
+  }
+  message: string
+}
+
+export interface ValidateTokenResponse {
+  success: boolean,
+  message: string,
+  token: string,
+  data: {
+    id: string
+    firstName: string
+    lastName: string
+    company: string
+    email: string
+    phone: string
+    address: string
+    city: string
+    state: string
+    zipCode: string
+    country: string
+    planId?: string
+  }
+}
+
 // User/Customer types
 export interface Customer {
   id: string
@@ -62,11 +135,10 @@ export interface Customer {
 }
 
 export interface PaymentDetails {
-  email: string
-  fullName: string
-  cardNumber: string
-  expiryDate: string
-  cvv: string
+  transactionId: string
+  status: string
+  amount: number
+  planId: string
 }
 
 // API Error types

@@ -7,23 +7,16 @@ import PricingCard from "@/components/pricing-card"
 import PaymentModal from "@/components/payment-modal"
 import { fetchCustomer, fetchPlans } from "@/lib/api-client"
 import { Loader } from "lucide-react"
-import { getDemoPlans, PLAN } from "@/lib/constants"
-
-interface UserData {
-  firstName?: string
-  lastName?: string
-  company?: string
-  email?: string
-  address?: string
-  phone?: string
-}
+import { getDemoPlans, PLAN, singlePlan} from "@/lib/constants"
+import { UserData } from "@/lib/types"
 
 interface PricingPageProps {
   userId?: string
   userData?: UserData
+  disabled?: boolean
 }
 
-export default function PricingPage({ userId, userData }: PricingPageProps) {
+export default function PricingPage({ userId, userData, disabled }: PricingPageProps) {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly")
   const [plans, setPlans] = useState<PLAN[]>([])
   const [loading, setLoading] = useState(true)
@@ -32,9 +25,31 @@ export default function PricingPage({ userId, userData }: PricingPageProps) {
   const [showPayment, setShowPayment] = useState(false)
   const router = useRouter()
 
+  // Load plans first
   useEffect(() => {
     loadPlans()
   }, [])
+
+  // Auto-select plan and open modal after plans are loaded
+  useEffect(() => {
+    // Only proceed if plans are loaded and we have a planId
+    if (!loading && plans.length > 0 && userData?.planId && userData.planId !== "") {
+      const plan = getPlanById(userData.planId)
+      if (plan) {
+        // Auto-select the plan and open modal
+        handleSelectPlan(plan)
+      }
+    }
+  }, [loading, plans, userData?.planId])
+
+  const getPlanById = (id: string): PLAN | null => {
+    const plan = plans.find(plan => plan.id === id)
+    if (!plan) {
+      console.log(`Plan with ID ${id} not found`)
+      return null
+    }
+    return plan
+  }
 
   const loadPlans = async () => {
     try {
@@ -49,7 +64,7 @@ export default function PricingPage({ userId, userData }: PricingPageProps) {
         setPlans(getDemoPlans())
       }
     } catch (err) {
-      console.error("invas Error loading plans:", err)
+      console.error("Error loading plans:", err)
       // Use demo data as fallback
       setPlans(getDemoPlans())
       setError("Using demo plans. Connect to API for live pricing.")
@@ -120,40 +135,19 @@ export default function PricingPage({ userId, userData }: PricingPageProps) {
                 onSelect={() => handleSelectPlan(plan)}
                 billingPeriod={billingPeriod}
                 yearlyPrice={getYearlyPrice(plan.amount)}
+                disabled={disabled}
+                isSelected={userData?.planId === plan.id}
               />
             ))}
           </div>
         )}
-
-        {/* FAQ Section */}
-        <div className="mt-20 rounded-lg p-8 border border-accent border-l-8">
-          <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-semibold mb-2 text-foreground">Can I change my plan later?</h3>
-              <p className="text-muted-foreground">
-                Yes, you can upgrade or downgrade your plan at any time. Changes take effect on your next billing cycle.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2 text-foreground">What payment methods do you accept?</h3>
-              <p className="text-muted-foreground">
-                We accept all major credit cards, debit cards, and bank transfers for eligible regions.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2 text-foreground">Is there a free trial?</h3>
-              <p className="text-muted-foreground">
-                Contact our sales team to discuss free trial options for enterprise plans.
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
-
       {/* Payment Modal */}
       {showPayment && selectedPlan && (
-        <PaymentModal plan={selectedPlan} onClose={() => setShowPayment(false)} onSuccess={handlePaymentSuccess} 
+        <PaymentModal 
+          plan={selectedPlan} 
+          onClose={() => setShowPayment(false)} 
+          onSuccess={handlePaymentSuccess} 
           billing={billingPeriod}
           userId={userId}
           userData={userData}

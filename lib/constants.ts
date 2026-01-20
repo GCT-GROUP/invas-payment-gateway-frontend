@@ -6,8 +6,14 @@
 export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
   API_KEY: process.env.NEXT_PUBLIC_API_KEY || "demo-key",
+
+  // PC GLOBAL 
+  PC_BASE_URL: process.env.NEXT_PUBLIC_PC_API_URL || "http://localhost:3000/api",
+  PC_API_KEY: process.env.NEXT_PUBLIC_PC_API_KEY || "demo-key",
+
   TIMEOUT: 30000, // 30 seconds
 }
+export const SUPPORT_EMAIL = "support@invas.me"
 
 // Endpoints
 export const ENDPOINTS = {
@@ -25,10 +31,10 @@ export const ENDPOINTS = {
 
 // Billing Configuration
 export const BILLING_CONFIG = {
-  YEARLY_DISCOUNT_PERCENT: 20,
-  YEARLY_MULTIPLIER: 12,
-  CURRENCY_SYMBOL: "$",
-  DEFAULT_CURRENCY: "USD",
+  YEARLY_DISCOUNT_PERCENT: 17,
+  YEARLY_MULTIPLIER: 10,
+  CURRENCY_SYMBOL: "₦",
+  DEFAULT_CURRENCY: "NGN",
 }
 
 // Payment Status
@@ -148,60 +154,63 @@ export interface PLAN {
 }
 
 export const getDemoPlans = (): PLAN[] => [
-    {
-      id: "plan_starter",
-      externalPlanId: "plan_starter",
-      name: "Starter Pack",
-      amount: 45000,
-      duration: 30,
-      currency: "NGN",
-      features: {
-        "Launching Campaigns": "✓",
-        "1,000 ChatBot Sessions Monthly": "✓",
-        "Live Analytics & Statistics": "✓",
-        "1 Team Member": "✓",
-        "Chatbot Factory": "✓",
-        "Phone Books": "✓",
-        "5 GB Cloud Storage": "✓",
-      },
-      isActive: true,
+  {
+    id: "plan_starter",
+    externalPlanId: "plan_starter",
+    name: "Starter",
+    amount: 45000,
+    duration: 30,
+    currency: "NGN",
+    features: {
+      "Launching Campaigns": "✓",
+      "1,000 ChatBot Sessions Monthly": "✓",
+      "Live Analytics & Statistics": "✓",
+      "1 Team Member": "✓",
+      "Chatbot Factory": "✓",
+      "Phone Books": "✓",
+      "5 GB Cloud Storage": "✓",
     },
-    {
-      id: "plan_growth",
-      externalPlanId: "plan_growth",
-      name: "Growth Pack",
-      amount: 90000,
-      duration: 30,
-      currency: "NGN",
-      description: "Everything in Starter Pack",
-      features: {
-        "Leads Management": "✓",
-        "5,000 ChatBot Sessions": "✓",
-        "Product Catalogue": "✓",
-        "5 Team Members": "✓",
-        "Message Scheduling": "✓",
-        "Send Template API": "✓",
-        "10 GB Cloud Storage": "✓",
-      },
-      isActive: true,
+    isActive: true,
+  },
+  {
+    id: "plan_growth",
+    externalPlanId: "plan_growth",
+    name: "Growth Plan",
+    amount: 90000,
+    duration: 30,
+    currency: "NGN",
+    description: "Everything in Starter Pack",
+    features: {
+      "Leads Management": "✓",
+      "5,000 ChatBot Sessions": "✓",
+      "Product Catalogue": "✓",
+      "5 Team Members": "✓",
+      "Message Scheduling": "✓",
+      "Send Template API": "✓",
+      "10 GB Cloud Storage": "✓",
     },
-    {
-      id: "plan_premium",
-      externalPlanId: "plan_premium",
-      name: "Premium Pack",
-      amount: 240000,
-      duration: 30,
-      currency: "NGN",
-      description: "Everything in Growth Pack",
-      features: {
-        "Flow Automation": "✓",
-        "10,000 ChatBot Sessions": "✓",
-        "Order Management": "✓",
-        "10 Team Members": "✓",
-        "Dedicated Support": "✓",
-        "BlueTick Verification": "✓",
-        "15 GB Cloud Storage": "✓",
-      },
-      isActive: true,
+    isActive: true,
+    isPopular: true,
+  },
+  {
+    id: "plan_premium",
+    externalPlanId: "plan_premium",
+    name: "Premium Pack",
+    amount: 240000,
+    duration: 30,
+    currency: "NGN",
+    description: "Everything in Growth Pack",
+    features: {
+      "Flow Automation": "✓",
+      "10,000 ChatBot Sessions": "✓",
+      "Order Management": "✓",
+      "10 Team Members": "✓",
+      "Dedicated Support": "✓",
+      "BlueTick Verification": "✓",
+      "15 GB Cloud Storage": "✓",
     },
-  ]
+    isActive: true,
+  },
+]
+
+export const singlePlan = getDemoPlans()[0]

@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import { Providers } from "../components/providers"
+import { Providers } from "./providers"
 import { Inter, JetBrains_Mono } from "next/font/google"
 
 const inter = Inter({ subsets: ["latin"] })

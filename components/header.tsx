@@ -26,7 +26,8 @@ export default function Header() {
             <div className="w-8 h-8 rounded-full flex items-center justify-center">
               <img src="/icon-dark-32x32.png" alt="Image Logo" />
             </div>
-            <span className="tracking-wide">inVAS</span>
+            <span className="tracking-wide">inVAS</span> 
+            {/* <span className="text-xs self-end">Payment Gateway</span> */}
           </Link>
 
           {/* Dark Mode Toggle */}

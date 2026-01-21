@@ -11,9 +11,29 @@ export const API_CONFIG = {
   PC_BASE_URL: process.env.NEXT_PUBLIC_PC_API_URL || "http://localhost:3000/api",
   PC_API_KEY: process.env.NEXT_PUBLIC_PC_API_KEY || "demo-key",
 
+  // LOTUS API 
+  LOTUS_BASE_URL: process.env.NEXT_PUBLIC_LOTUS_API_URL || "http://localhost:3000/api",
+  LOTUS_API_KEY: process.env.NEXT_PUBLIC_LOTUS_API_KEY || "demo-key",
+
   TIMEOUT: 30000, // 30 seconds
 }
+
+export const RETRY_CONFIG = {
+  maxRetries: 3,
+  retryDelay: 1000, // milliseconds
+  retryableStatusCodes: [408, 429, 500, 502, 503, 504],
+}
+
+export const CACHE_TTL = 5 * 60 * 1000 // 5 minutes
+
 export const SUPPORT_EMAIL = "support@invas.me"
+
+export const PAYMENT_METHOD = {
+  CARD: "card",
+  BANK_TRANSFER: "bank_transfer",
+  // CASH: "cash",
+}
+
 
 // Endpoints
 export const ENDPOINTS = {

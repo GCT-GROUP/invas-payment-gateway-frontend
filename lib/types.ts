@@ -16,6 +16,10 @@ export interface Plan {
 }
 
 export interface UserData {
+  id?: string
+  externalUserId?: string
+  externalCustomerId?: string
+  name?: string
   firstName?: string
   lastName?: string
   company?: string
@@ -33,6 +37,28 @@ export interface PricingTier {
   description?: string
   isPopular?: boolean
   features: string[]
+}
+
+export interface CustomerData {
+  id?: string
+  externalUserId?: string
+  externalCustomerId?: string
+  name?: string
+  firstName?: string
+  lastName?: string
+  company?: string
+  email?: string
+  phone?: string
+  address?: string
+  companyName?: string
+  city?: string
+  state?: string
+  zipCode?: string
+  country?: string
+  planId?: string
+  metadata?: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 // Payment related types

@@ -47,7 +47,7 @@ export default function Home() {
     
     try {
       setLoading(true)
-      const response = await fetchCustomer(userId)
+      const response = await fetchCustomer(userId, userData)
       console.log("API Response 12:", response)
 
       if (response.success && response.data) {
@@ -97,7 +97,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-muted">
       <Header />
-      <PricingPage userId={userId} userData={userData}/>
+      <PricingPage userData={userData}/>
       {/* // loading={loading} */}
       <Faqs />
       <Footer />

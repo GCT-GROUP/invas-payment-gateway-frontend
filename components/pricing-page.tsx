@@ -5,18 +5,17 @@ import { useRouter } from "next/navigation"
 import PricingToggle from "@/components/pricing-toggle"
 import PricingCard from "@/components/pricing-card"
 import PaymentModal from "@/components/payment-modal"
-import { fetchCustomer, fetchPlans } from "@/lib/api-client"
+import { fetchPlans } from "@/lib/api-client"
 import { Loader } from "lucide-react"
 import { getDemoPlans, PLAN, singlePlan} from "@/lib/constants"
 import { UserData } from "@/lib/types"
 
 interface PricingPageProps {
-  userId?: string
   userData?: UserData
   disabled?: boolean
 }
 
-export default function PricingPage({ userId, userData, disabled }: PricingPageProps) {
+export default function PricingPage({ userData, disabled }: PricingPageProps) {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly")
   const [plans, setPlans] = useState<PLAN[]>([])
   const [loading, setLoading] = useState(true)
@@ -149,7 +148,6 @@ export default function PricingPage({ userId, userData, disabled }: PricingPageP
           onClose={() => setShowPayment(false)} 
           onSuccess={handlePaymentSuccess} 
           billing={billingPeriod}
-          userId={userId}
           userData={userData}
         />
       )}

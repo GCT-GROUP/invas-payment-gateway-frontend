@@ -67,15 +67,24 @@ export interface PaymentInitiateRequest {
   planId: string
   metadata?: Record<string, any>
 }
+export interface ConfirmPaymentApiResponse<T = any> {
+  success: boolean
+  data?: T
+  message?: string
+}
+
 
 export interface PaymentInitiateResponse {
   success: boolean
+  message: string
   data: {
     transactionId: string
-    paymentUrl?: string
+    checkoutUrl: string
+    currency: string
+    paymentReference: string
     status: string
+    amount: number
   }
-  message: string
 }
 
 export interface PaymentVerifyResponse {

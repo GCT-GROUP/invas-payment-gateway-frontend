@@ -1,14 +1,12 @@
-import { metadata } from "@/app/layout";
-import { API_CONFIG, RETRY_CONFIG, CACHE_TTL } from "./constants"
+import { API_CONFIG } from "./constants"
 import { Plan, 
   CustomerData,
   PaymentInitiateResponse, 
   PaymentVerifyResponse, 
   CustomerVerifyResponse, 
-  ValidateTokenResponse
+  ValidateTokenResponse,
+  ConfirmPaymentApiResponse
 } from "./types"
-
-const customerCache = new Map<string, { data: CustomerVerifyResponse; timestamp: number }>()
 
 export async function validateToken(token:string): Promise<ValidateTokenResponse>{
   try {
@@ -124,8 +122,8 @@ export async function fetchPlans(): Promise<Plan[]> {
 }
 
 export async function initiatePayment(
-  userId: string,
-  planId: string,
+  userId?: string,
+  planId?: string,
   metadata?: Record<string, any>,
 ): Promise<PaymentInitiateResponse> {
   try {
@@ -137,6 +135,7 @@ export async function initiatePayment(
       },
       body: JSON.stringify({
         userId,
+        externalUserId: userId,
         planId,
         metadata: metadata || { source: "web" },
       }),
@@ -173,6 +172,41 @@ export async function verifyPayment(transactionId: string): Promise<PaymentVerif
     throw error
   }
 }
+
+/**
+ * Fetch transaction status by transaction ID
+ * @param transactionId - The transaction ID to check
+ * @returns Promise with transaction data
+ */
+export async function getTransactionStatus(transactionId: string): Promise<ConfirmPaymentApiResponse> {
+  try {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/payments/verify/${transactionId}`, {
+      method: 'GET',
+      headers: {
+        'X-API-Key': API_CONFIG.API_KEY || '',
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    
+    return {
+      success: true,
+      data: data,
+    }
+  } catch (error: any) {
+    console.error('Error fetching transaction status:', error)
+    return {
+      success: false,
+      message: error.message || 'Failed to fetch transaction status',
+    }
+  }
+}
+
 
 /**
  * Creates a customer in Lotus first, then creates a corresponding customer in your system

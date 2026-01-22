@@ -59,12 +59,13 @@ export const BILLING_CONFIG = {
 
 // Payment Status
 export const PAYMENT_STATUS = {
-  PENDING: "pending",
-  PROCESSING: "processing",
-  COMPLETED: "completed",
-  FAILED: "failed",
-  CANCELED: "canceled",
-  REFUNDED: "refunded",
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  SUCCESS: "SUCCESS",
+  COMPLETED: "COMPLETED",
+  FAILED: "FAILED",
+  CANCELED: "CANCELED",
+  REFUNDED: "REFUNDED",
 } as const
 
 // Plan Configuration

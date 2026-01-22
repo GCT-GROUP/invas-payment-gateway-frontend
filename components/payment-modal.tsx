@@ -5,10 +5,10 @@ import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { PLAN, PAYMENT_METHOD} from "@/lib/constants"
-import { UserData } from "@/lib/types"
-import { getOrCreateCustomer } from "@/lib/api-client"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { PLAN, PAYMENT_METHOD } from "@/lib/constants"
+import { UserData } from "@/lib/types"
+import { getOrCreateCustomer, initiatePayment } from "@/lib/api-client"
 
 interface PaymentModalProps {
   plan: PLAN
@@ -26,21 +26,43 @@ export default function PaymentModal({
   userData 
 }: PaymentModalProps) {
   const [formData, setFormData] = useState({
-    firstName: userData?.firstName || "",
-    lastName: userData?.lastName || "",
-    email: userData?.email || "",
-    phone: userData?.phone || "",
-    company: userData?.company || "",
-    address: userData?.address || "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    company: "",
+    address: "",
     paymentMethod: PAYMENT_METHOD.CARD,
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [customer, setCustomer] = useState<string | null>(null)
+  const [customerId, setCustomerId] = useState<string | null>(null)
 
-  // Pre-fill form if userData is provided
   useEffect(() => {
     loadCustomer()
+    populateFormData()
+  }, [userData])
+
+  const loadCustomer = async () => {
+    if (!userData?.id) return
+    
+    try {
+      setLoading(true)
+      const response = await getOrCreateCustomer(userData.id, userData)
+
+      if (response.success && response.data?.externalCustomerId) {
+        setCustomerId(response.data.externalCustomerId)
+      } else {
+        console.warn("Failed to load customer data:", response.message)
+      }
+    } catch (error) {
+      console.error("Error loading customer:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const populateFormData = () => {
     if (userData) {
       setFormData({
         firstName: userData.firstName || "",
@@ -52,37 +74,19 @@ export default function PaymentModal({
         paymentMethod: PAYMENT_METHOD.CARD,
       })
     }
-  }, [userData])
-  const loadCustomer = async () => {
-    if (!userData?.id) return
-    
-    try {
-      setLoading(true)
-      const response = await getOrCreateCustomer(userData.id, userData)
-
-      if (response.success && response.data) {
-        setCustomer(response.data.externalCustomerId)
-        // console.log("API Response 12:", response.data)
-        // if (!response.data.externalCustomerId) {
-        //   const lotusCreate = await createLotusCustomer(userData)
-        //   setCustomer(lotusCreate?.data?.externalCustomerId)
-        // } else {
-        //   setCustomer(response.data.externalCustomerId)
-        // }
-      } else {
-        console.warn("Failed to load customer data:", response.message)
-      }
-    } catch (error) {
-      console.error("Error loading customer:", error)
-    } finally {
-      setLoading(false)
-    }
   }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    })
+    }))
+  }
+
+  const calculateBilledAmount = () => {
+    return billing === "yearly" 
+      ? Number(plan.amount) * 10 
+      : Number(plan.amount)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,33 +97,25 @@ export default function PaymentModal({
     try {
       const paymentData = {
         ...formData,
+        billing_cycle: billing, 
         planId: plan.id,
-        amount: plan.amount,
-        userId: customer
+        amount: calculateBilledAmount(),
+        userId: customerId
       }
 
-      console.log("Payment Data:", paymentData)
-      // // Make API call to initiate payment
-      // const response = await fetch("/api/payments/initiate", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(paymentData),
-      // })
+      const response = await initiatePayment(customerId || undefined, paymentData.planId || undefined, paymentData)
 
-      // const data = await response.json()
-
-      // if (!response.ok) {
-      //   throw new Error(data.message || "Payment initiation failed")
-      // }
-
-      // // Redirect to payment gateway or handle success
-      // if (data.authorizationUrl) {
-      //   window.location.href = data.authorizationUrl
-      // } else {
-      //   onSuccess(data.transactionId)
-      // }
+      if (response.success && response.data) {
+        const { checkoutUrl, transactionId } = response.data
+        
+        // Open checkout in new tab
+        window.open(checkoutUrl, '_blank', 'noopener,noreferrer')
+        
+        // Redirect current page to confirmation to call success callback
+        onSuccess(transactionId)
+      } else {
+        setError(response.message || "Payment initiation failed")
+      }
     } catch (err: any) {
       setError(err.message || "Something went wrong")
     } finally {
@@ -133,7 +129,7 @@ export default function PaymentModal({
         {/* Header */}
         <div className="sticky top-0 bg-card border-b dark:border-primary p-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-foreground">Complete Payment</h2>
-          <Button onClick={onClose} variant={"ghost"} className="text-muted-foreground hover:text-foreground transition-colors">
+          <Button onClick={onClose} variant="ghost" className="text-muted-foreground hover:text-foreground transition-colors">
             <X className="w-6 h-6" />
           </Button>
         </div>
@@ -148,13 +144,6 @@ export default function PaymentModal({
             <p className="text-sm text-foreground mt-1">Billed {billing}</p>
           </div>
 
-          {/* Show user ID if provided */}
-          {/* {customer && (
-            <div className="mb-4 p-3 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground">User ID: {customer}</p>
-            </div>
-          )} */}
-
           {/* Error Message */}
           {error && (
             <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
@@ -167,8 +156,7 @@ export default function PaymentModal({
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required className="border-[#0059c6]" disabled={!!userData?.firstName}/> 
-                {/* Disable if pre-filled */}
+                <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required className="border-[#0059c6]" disabled={!!userData?.firstName}/>
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="lastName">Last Name</Label>
@@ -198,7 +186,7 @@ export default function PaymentModal({
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="paymentMethod">Payment Method</Label>
-              <RadioGroup value={formData.paymentMethod} onValueChange={(value) => setFormData({ ...formData, paymentMethod: value })}>
+              <RadioGroup value={formData.paymentMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value={PAYMENT_METHOD.CARD} id="card" className="border-[#0059c6] text-accent" />
                   <Label htmlFor="card" className="font-normal">Card</Label>

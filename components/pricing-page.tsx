@@ -94,7 +94,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
 
   const handlePaymentSuccess = (transactionId: string) => {
     // Redirect to success page or dashboard
-    router.push(`/success?transaction=${transactionId}`)
+    router.push(`/confirm?transaction=${transactionId}`)
   }
 
   return (

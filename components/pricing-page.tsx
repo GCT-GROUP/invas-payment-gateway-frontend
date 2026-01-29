@@ -34,6 +34,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
     // Only proceed if plans are loaded and we have a planId
     if (!loading && plans.length > 0 && userData?.planId && userData.planId !== "") {
       const plan = getPlanById(userData.planId)
+      setBillingPeriod(userData.billingCycle as "monthly" | "yearly")
       if (plan) {
         // Auto-select the plan and open modal
         handleSelectPlan(plan)
@@ -99,7 +100,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
 
   return (
     <section id="pricing" className="py-10 md:py-14 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-[1350px] mx-auto px-8">
         {/* Header */}
         <div className="text-center mb-14 md:mb-16">
           <h1 className="text-4xl md:text-5xl font-semibold mb-4 text-foreground">Plans & Pricing</h1>
@@ -125,7 +126,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
 
         {/* Pricing Cards */}
         {!loading && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 gap-20 mb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 lg:gap-8 gap-20 mb-12">
             {plans.map((plan, index) => (
               <PricingCard
                 key={plan.id}

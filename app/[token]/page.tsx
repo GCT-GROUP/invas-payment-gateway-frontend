@@ -82,7 +82,7 @@ export default function TokenPage() {
     return (
         <main className="min-h-screen bg-gradient-to-b from-background to-muted">
             <Header />
-                <PricingPage userId={userId} userData={userData}/>
+                <PricingPage userData={userData}/>
             <Faqs />
             <Footer />
         </main>

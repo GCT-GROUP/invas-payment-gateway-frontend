@@ -27,6 +27,7 @@ export interface UserData {
   address?: string
   phone?: string
   planId?: string
+  billingCycle?: string
 }
 
 export interface PricingTier {
@@ -43,6 +44,9 @@ export interface CustomerData {
   id?: string
   externalUserId?: string
   externalCustomerId?: string
+  PCUserId?: string
+  lotusId?: string
+  paystackId?: string
   name?: string
   firstName?: string
   lastName?: string
@@ -125,6 +129,9 @@ export interface CustomerVerifyResponse {
     id: string
     externalUserId: string
     externalCustomerId: string
+    PCUserId: string
+    lotusId: string
+    paystackId: string
     name: string
     firstName: string
     lastName: string

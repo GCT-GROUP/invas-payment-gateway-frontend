@@ -99,6 +99,30 @@ export async function validateToken(token:string): Promise<ValidateTokenResponse
 //   }
 // }
 
+export async function postFetchCustomer(userId: string, metadata?: CustomerData): Promise<CustomerVerifyResponse> {
+  try {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/customers`, {
+      method: "POST",
+      headers: {
+        "X-API-Key": API_CONFIG.API_KEY || "",
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      console.log("Failed to fetch customer", response.json())
+      // throw new Error("Failed to fetch customer")
+    }
+
+    const data = await response.json()
+    return data || []
+
+  } catch (error) {
+    console.error("invas Error fetching customer:", error)
+    throw error
+  }
+}
+
 export async function fetchPlans(): Promise<Plan[]> {
   try {
     const response = await fetch(`${API_CONFIG.BASE_URL}/plans`, {
@@ -114,7 +138,7 @@ export async function fetchPlans(): Promise<Plan[]> {
     }
 
     const data = await response.json()
-    return data.data || []
+    return data.data.plans || []
   } catch (error) {
     console.error("invas Error fetching plans:", error)
     return []

@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { PLAN, PAYMENT_METHOD } from "@/lib/constants"
 import { UserData } from "@/lib/types"
-import { getOrCreateCustomer, initiatePayment } from "@/lib/api-client"
+import { getOrCreateCustomer, initiatePayment, postFetchCustomer } from "@/lib/api-client"
 
 interface PaymentModalProps {
   plan: PLAN
@@ -48,7 +48,7 @@ export default function PaymentModal({
     
     try {
       setLoading(true)
-      const response = await getOrCreateCustomer(userData.id, userData)
+      const response = await postFetchCustomer(userData.id, userData)
 
       if (response.success && response.data?.externalCustomerId) {
         setCustomerId(response.data.externalCustomerId)
@@ -140,8 +140,10 @@ export default function PaymentModal({
             <h3 className="font-semibold text-foreground mb-2">{plan.name}</h3>
             <p className="text-2xl font-bold text-accent">
               ₦{typeof plan.amount === 'number' ? plan.amount.toLocaleString() : plan.amount}
+              {/* ₦{calculateBilledAmount().toLocaleString()} */}
+              {/* {billing === "yearly" && " (17% discount)"} */}
             </p>
-            <p className="text-sm text-foreground mt-1">Billed {billing}</p>
+            <p className="text-sm text-foreground mt-1">Billed {billing} {billing === "yearly" && " (17% discount)"}</p>
           </div>
 
           {/* Error Message */}

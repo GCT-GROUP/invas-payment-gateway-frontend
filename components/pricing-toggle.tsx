@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button"
 
 interface PricingToggleProps {
-  billingPeriod: "monthly" | "yearly"
-  onToggle: (period: "monthly" | "yearly") => void
+  billingPeriod: "monthly" | "annually"
+  onToggle: (period: "monthly" | "annually") => void
 }
 
 export default function PricingToggle({ billingPeriod, onToggle }: PricingToggleProps) {
@@ -19,9 +19,9 @@ export default function PricingToggle({ billingPeriod, onToggle }: PricingToggle
       </Button>
       <span className="text-sm font-medium text-accent">|</span>
       <Button
-        variant={billingPeriod === "yearly" ? "default" : "outline"}
-        onClick={() => onToggle("yearly")}
-        className={billingPeriod === "yearly" ? "bg-primary text-primary-foreground" : "border border-primary dark:border-primary dark:hover:text-[#0059c6]"}
+        variant={billingPeriod === "annually" ? "default" : "outline"}
+        onClick={() => onToggle("annually")}
+        className={billingPeriod === "annually" ? "bg-primary text-primary-foreground" : "border border-primary dark:border-primary dark:hover:text-[#0059c6]"}
       >
         Yearly
         <span className="ml-2 text-xs bg-accent text-primary px-2 py-0.5 rounded border border-primary">Save 17%</span>

@@ -7,7 +7,7 @@ interface PricingCardProps {
   plan: PLAN
   isPopular?: boolean
   onSelect: () => void
-  billingPeriod: "monthly" | "yearly"
+  billingPeriod: "monthly" | "annually"
   yearlyPrice?: number
   disabled?: boolean
   isSelected?: boolean
@@ -24,10 +24,10 @@ export default function PricingCard({
 }: PricingCardProps) {
   const featureList = Array.isArray(plan.features) ? plan.features : Object.keys(plan.features)
 
-  const rawPrice = billingPeriod === "yearly" && yearlyPrice ? yearlyPrice : plan.amount
+  const rawPrice = billingPeriod === "annually" && yearlyPrice ? yearlyPrice : plan.amount
   const numericPrice = typeof rawPrice === 'string' ? parseFloat(rawPrice) : rawPrice
   const displayPrice = isNaN(numericPrice) ? 0 : numericPrice
-  // const displayPrice = billingPeriod === "yearly" && yearlyPrice ? yearlyPrice : plan.amount
+  // const displayPrice = billingPeriod === "annually" && yearlyPrice ? yearlyPrice : plan.amount
   
   return (
     <div
@@ -58,12 +58,12 @@ export default function PricingCard({
               ₦{displayPrice.toLocaleString()}
             </span>
             <span className="text-sm sm:text-base text-muted-foreground">
-              /{billingPeriod === "yearly" ? "year" : "month"}
+              /{billingPeriod === "annually" ? "year" : "month"}
             </span>
           </div>
-          {billingPeriod === "yearly" && (
+          {billingPeriod === "annually" && (
             <p className="text-xs sm:text-sm text-accent mt-1 sm:mt-2">
-              17% savings with yearly billing
+              17% savings with annually billing
             </p>
           )}
         </div>

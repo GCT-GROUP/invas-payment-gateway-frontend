@@ -32,8 +32,8 @@ export function formatPrice(amount: number, currency: string = BILLING_CONFIG.DE
 /**
  * Get display price based on billing period
  */
-export function getDisplayPrice(monthlyPrice: number, billingPeriod: "monthly" | "yearly"): number {
-  return billingPeriod === "yearly" ? calculateYearlyPrice(monthlyPrice) : monthlyPrice
+export function getDisplayPrice(monthlyPrice: number, billingPeriod: "monthly" | "annually"): number {
+  return billingPeriod === "annually" ? calculateYearlyPrice(monthlyPrice) : monthlyPrice
 }
 
 /**

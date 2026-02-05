@@ -19,15 +19,60 @@ export interface UserData {
   id?: string
   externalUserId?: string
   externalCustomerId?: string
+  CUserId: string
+  paystackId: string
+  lotusId: string
+  email?: string
   name?: string
   firstName?: string
   lastName?: string
-  company?: string
-  email?: string
-  address?: string
   phone?: string
+  companyName?: string
+  address?: string
+  city: string
+  state: string
+  country: string
+  zipCode: string
+  currentPlan: string
+  metadata: string
+  createdAt: string
+  updatedAt: string
+  company?: string
   planId?: string
   billingCycle?: string
+}
+
+export interface PcGlobalPaymentDetails {
+  payment_link_id: number,
+  token: string,
+  amount: string,
+  currency: string,
+  reference: string,
+  business: {
+    uuid: string,
+    name: string
+  },
+  user:{
+    id: string,
+    email: string,
+    name: string,
+    phone?: string,
+    company?: string,
+    address?: string,
+    city?: string,
+    state?: string,
+    zipCode?: string,
+    country: string,
+    planId?: string
+  }
+  status: string,
+  expires_at: string,
+  is_valid: boolean,
+  metadata: {
+    plan: string,
+    cycle: string,
+    user_id: number
+  }
 }
 
 export interface PricingTier {
@@ -48,6 +93,7 @@ export interface CustomerData {
   lotusId?: string
   paystackId?: string
   name?: string
+  billingCycle?: string
   firstName?: string
   lastName?: string
   company?: string
@@ -153,18 +199,65 @@ export interface ValidateTokenResponse {
   message: string,
   token: string,
   data: {
-    id: string
-    firstName: string
-    lastName: string
-    company: string
-    email: string
-    phone: string
-    address: string
-    city: string
-    state: string
-    zipCode: string
-    country: string
-    planId?: string
+    customer: { 
+      id: string
+      externalUserId?: string
+      externalCustomerId?: string
+      CUserId: string
+      paystackId: string
+      lotusId: string
+      email?: string
+      name?: string
+      firstName?: string
+      lastName?: string
+      phone?: string
+      companyName?: string
+      address?: string
+      city: string
+      state: string
+      country: string
+      zipCode: string
+      currentPlan: string
+      metadata: string
+      createdAt: string
+      updatedAt: string
+      company?: string
+      planId?: string
+      billingCycle?: string
+    }
+    payment: PcGlobalPaymentDetails
+    // payment: {
+    //   payment_link_id: number,
+    //   token: string,
+    //   amount: string,
+    //   currency: string,
+    //   reference: string,
+    //   business: {
+    //     uuid: string,
+    //     name: string
+    //   },
+    //   user?:{
+    //     id: string,
+    //     email: string,
+    //     name: string,
+    //     phone: string,
+    //     company: string,
+    //     address: string,
+    //     city: string,
+    //     state: string,
+    //     zipCode: string,
+    //     country: string,
+    //     planId?: string
+    //   }
+    //   status: string,
+    //   expires_at: string,
+    //   is_valid: boolean,
+    //   metadata: {
+    //     plan: string,
+    //     cycle: string,
+    //     user_id: number
+    //   }
+    // }
   }
 }
 
@@ -210,7 +303,7 @@ export interface Subscription {
 }
 
 export interface BillingPeriod {
-  type: "monthly" | "yearly"
+  type: "monthly" | "annually"
   duration: number
   discount?: number
 }

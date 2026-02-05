@@ -7,16 +7,17 @@ import PricingCard from "@/components/pricing-card"
 import PaymentModal from "@/components/payment-modal"
 import { fetchPlans } from "@/lib/api-client"
 import { Loader } from "lucide-react"
-import { getDemoPlans, PLAN, singlePlan} from "@/lib/constants"
-import { UserData } from "@/lib/types"
+import { getDemoPlans, PLAN} from "@/lib/constants"
+import { UserData, PcGlobalPaymentDetails } from "@/lib/types"
 
 interface PricingPageProps {
   userData?: UserData
+  paymentDetails?: PcGlobalPaymentDetails
   disabled?: boolean
 }
 
-export default function PricingPage({ userData, disabled }: PricingPageProps) {
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly")
+export default function PricingPage({ userData, paymentDetails, disabled }: PricingPageProps) {
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annually">("monthly")
   const [plans, setPlans] = useState<PLAN[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +35,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
     // Only proceed if plans are loaded and we have a planId
     if (!loading && plans.length > 0 && userData?.planId && userData.planId !== "") {
       const plan = getPlanById(userData.planId)
-      setBillingPeriod(userData.billingCycle as "monthly" | "yearly")
+      setBillingPeriod(userData.billingCycle as "monthly" | "annually")
       if (plan) {
         // Auto-select the plan and open modal
         handleSelectPlan(plan)
@@ -84,7 +85,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
 
   const handleSelectPlan = (plan: PLAN) => {
     const baseAmount = typeof plan.amount === 'string' ? parseFloat(plan.amount) : plan.amount
-    const finalAmount = billingPeriod === "yearly" ? getYearlyPrice(plan.amount) : baseAmount
+    const finalAmount = billingPeriod === "annually" ? getYearlyPrice(plan.amount) : baseAmount
     
     setSelectedPlan({
       ...plan,
@@ -150,6 +151,7 @@ export default function PricingPage({ userData, disabled }: PricingPageProps) {
           onSuccess={handlePaymentSuccess} 
           billing={billingPeriod}
           userData={userData}
+          paymentDetails={paymentDetails}
         />
       )}
     </section>

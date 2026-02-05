@@ -5,10 +5,9 @@ import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { PLAN, PAYMENT_METHOD } from "@/lib/constants"
-import { UserData } from "@/lib/types"
-import { getOrCreateCustomer, initiatePayment, postFetchCustomer } from "@/lib/api-client"
+import { UserData, PcGlobalPaymentDetails } from "@/lib/types"
+import { initiatePayment } from "@/lib/api-client"
 
 interface PaymentModalProps {
   plan: PLAN
@@ -16,6 +15,7 @@ interface PaymentModalProps {
   onClose: () => void
   onSuccess: (transactionId: string) => void
   userData?: UserData
+  paymentDetails?: PcGlobalPaymentDetails 
 }
 
 export default function PaymentModal({ 
@@ -24,7 +24,7 @@ export default function PaymentModal({
   onClose, 
   onSuccess,
   userData 
-}: PaymentModalProps) {
+}: Readonly<PaymentModalProps>) {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -36,31 +36,10 @@ export default function PaymentModal({
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [customerId, setCustomerId] = useState<string | null>(null)
 
   useEffect(() => {
-    loadCustomer()
     populateFormData()
   }, [userData])
-
-  const loadCustomer = async () => {
-    if (!userData?.id) return
-    
-    try {
-      setLoading(true)
-      const response = await postFetchCustomer(userData.id, userData)
-
-      if (response.success && response.data?.externalCustomerId) {
-        setCustomerId(response.data.externalCustomerId)
-      } else {
-        console.warn("Failed to load customer data:", response.message)
-      }
-    } catch (error) {
-      console.error("Error loading customer:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const populateFormData = () => {
     if (userData) {
@@ -84,7 +63,7 @@ export default function PaymentModal({
   }
 
   const calculateBilledAmount = () => {
-    return billing === "yearly" 
+    return billing === "annually" 
       ? Number(plan.amount) * 10 
       : Number(plan.amount)
   }
@@ -100,10 +79,10 @@ export default function PaymentModal({
         billing_cycle: billing, 
         planId: plan.id,
         amount: calculateBilledAmount(),
-        userId: customerId
+        userId: userData?.paystackId
       }
 
-      const response = await initiatePayment(customerId || undefined, paymentData.planId || undefined, paymentData)
+      const response = await initiatePayment(userData?.paystackId || undefined, paymentData.planId || undefined, paymentData)
 
       if (response.success && response.data) {
         const { checkoutUrl, transactionId } = response.data
@@ -141,9 +120,9 @@ export default function PaymentModal({
             <p className="text-2xl font-bold text-accent">
               ₦{typeof plan.amount === 'number' ? plan.amount.toLocaleString() : plan.amount}
               {/* ₦{calculateBilledAmount().toLocaleString()} */}
-              {/* {billing === "yearly" && " (17% discount)"} */}
+              {billing === "annually" && " (17% discount)"}
             </p>
-            <p className="text-sm text-foreground mt-1">Billed {billing} {billing === "yearly" && " (17% discount)"}</p>
+            <p className="text-sm text-foreground mt-1">Billed {billing} {billing === "annually" && " (17% discount)"}</p>
           </div>
 
           {/* Error Message */}
@@ -186,7 +165,7 @@ export default function PaymentModal({
               <Input id="address" name="address" value={formData.address} onChange={handleChange} className="border-[#0059c6]" disabled={!!userData?.address}/>
             </div>
 
-            <div className="flex flex-col gap-2">
+            {/* <div className="flex flex-col gap-2">
               <Label htmlFor="paymentMethod">Payment Method</Label>
               <RadioGroup value={formData.paymentMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}>
                 <div className="flex items-center space-x-2">
@@ -198,7 +177,7 @@ export default function PaymentModal({
                   <Label htmlFor="bank-transfer" className="font-normal">Bank Transfer</Label>
                 </div>
               </RadioGroup>
-            </div>
+            </div> */}
 
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={loading}>

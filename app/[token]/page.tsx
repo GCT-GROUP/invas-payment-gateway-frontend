@@ -7,16 +7,16 @@ import PricingPage from "@/components/pricing-page"
 import Footer from "@/components/footer"
 import Faqs from "@/components/faqs"
 import { validateToken } from "@/lib/api-client"
-import { UserData } from "@/lib/types"
+import { UserData, PcGlobalPaymentDetails } from "@/lib/types"
 
 export default function TokenPage() {
     const params = useParams()
     const token = params.token as string
-    
+
     const [userData, setUserData] = useState<UserData | undefined>(undefined)
-    const [userId, setUserId] = useState<string | undefined>(undefined)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [paymentDetails, setPaymentDetails] = useState<PcGlobalPaymentDetails | undefined>(undefined)
 
     useEffect(() => {
         if (token) {
@@ -28,13 +28,13 @@ export default function TokenPage() {
         try {
             setLoading(true)
             setError(null)
-            
+
             // Validate and decode the token
             const response = await validateToken(token)
-                    
+
             if (response.success && response.data) {
-                setUserData(response.data)
-                setUserId(response.data.id)
+                setUserData(response.data.customer)
+                setPaymentDetails(response.data.payment)
             } else {
                 setError(response.message || "Invalid or expired token")
             }
@@ -51,9 +51,9 @@ export default function TokenPage() {
         return (
             <main className="min-h-screen bg-gradient-to-b from-background to-muted">
                 <Header />
-                    <div className="container mx-auto px-4 py-20 text-center">
-                        <p className="text-lg">Loading...</p>
-                    </div>
+                <div className="container mx-auto px-4 py-20 text-center">
+                    <p className="text-lg">Loading...</p>
+                </div>
                 <Footer />
             </main>
         )
@@ -64,14 +64,18 @@ export default function TokenPage() {
         return (
             <main className="min-h-screen bg-gradient-to-b from-background to-muted">
                 <Header />
-                    <div className="container mx-auto px-4 py-20 text-center">
-                        <div className="max-w-md mx-auto bg-destructive/10 border border-destructive rounded-lg p-8">
-                            <h1 className="text-2xl font-bold text-destructive mb-4">Invalid Token</h1>
-                            <p className="text-muted-foreground">
-                                { error || "The token you provided is invalid or has expired. Please request a new link."}
-                            </p>
-                        </div>
+                <div className="container mx-auto px-4 py-20 text-center mt-[11rem]">
+                    <div className="max-w-lg mx-auto bg-destructive/10 border border-destructive rounded-lg p-8">
+                        <h1 className="text-2xl font-bold text-destructive mb-4">Invalid Token</h1>
+                        <p className="text-muted-foreground text-lg">
+                            The token you provided is invalid or has expired.
+                            <br />
+                            <span className="font-semibold text-primary">Please request a new link.</span>
+                            {/* <br/> */}
+                            {/* {error && <span className="text-destructive"> {error}</span>} */}
+                        </p>
                     </div>
+                </div>
                 <Faqs />
                 <Footer />
             </main>
@@ -82,7 +86,7 @@ export default function TokenPage() {
     return (
         <main className="min-h-screen bg-gradient-to-b from-background to-muted">
             <Header />
-                <PricingPage userData={userData}/>
+                <PricingPage userData={userData} paymentDetails={paymentDetails} />
             <Faqs />
             <Footer />
         </main>

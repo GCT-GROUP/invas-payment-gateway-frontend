@@ -5,7 +5,7 @@ import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { PLAN, PAYMENT_METHOD } from "@/lib/constants"
+import { PLAN } from "@/lib/constants"
 import { UserData, PcGlobalPaymentDetails } from "@/lib/types"
 import { initiatePayment } from "@/lib/api-client"
 
@@ -32,7 +32,6 @@ export default function PaymentModal({
     phone: "",
     company: "",
     address: "",
-    paymentMethod: PAYMENT_METHOD.CARD,
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -50,7 +49,7 @@ export default function PaymentModal({
         phone: userData.phone || "",
         company: userData.company || "",
         address: userData.address || "",
-        paymentMethod: PAYMENT_METHOD.CARD,
+        // paymentMethod: PAYMENT_METHOD.CARD,
       })
     }
   }
@@ -60,12 +59,6 @@ export default function PaymentModal({
       ...prev,
       [e.target.name]: e.target.value,
     }))
-  }
-
-  const calculateBilledAmount = () => {
-    return billing === "annually" 
-      ? Number(plan.amount) * 10 
-      : Number(plan.amount)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -78,7 +71,7 @@ export default function PaymentModal({
         ...formData,
         billing_cycle: billing, 
         planId: plan.id,
-        amount: calculateBilledAmount(),
+        amount: plan.amount,
         userId: userData?.paystackId
       }
 
@@ -164,20 +157,6 @@ export default function PaymentModal({
               <Label htmlFor="address">Address (Optional)</Label>
               <Input id="address" name="address" value={formData.address} onChange={handleChange} className="border-[#0059c6]" disabled={!!userData?.address}/>
             </div>
-
-            {/* <div className="flex flex-col gap-2">
-              <Label htmlFor="paymentMethod">Payment Method</Label>
-              <RadioGroup value={formData.paymentMethod} onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value }))}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={PAYMENT_METHOD.CARD} id="card" className="border-[#0059c6] text-accent" />
-                  <Label htmlFor="card" className="font-normal">Card</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value={PAYMENT_METHOD.BANK_TRANSFER} id="bank-transfer" className="border-[#0059c6] text-accent" />
-                  <Label htmlFor="bank-transfer" className="font-normal">Bank Transfer</Label>
-                </div>
-              </RadioGroup>
-            </div> */}
 
             <div className="flex gap-4 pt-4">
               <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={loading}>

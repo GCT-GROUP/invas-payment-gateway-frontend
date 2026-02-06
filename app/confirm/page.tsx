@@ -223,14 +223,14 @@ export default function SuccessPage() {
                 </div>
               )}
 
-              {paymentDetails.paymentMethod && (
+              {/* {paymentDetails.paymentMethod && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Payment Method</span>
                   <span className="text-sm font-semibold text-foreground capitalize">
                     {paymentDetails.paymentMethod.replace('_', ' ')}
                   </span>
                 </div>
-              )}
+              )} */}
 
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Status</span>
@@ -245,7 +245,7 @@ export default function SuccessPage() {
           <div className="flex flex-col gap-3">
             {paymentDetails?.status === PAYMENT_STATUS.SUCCESS && (
               <>
-                <Button onClick={() => window.location.href = "https://invas.me"}className="w-full bg-accent hover:bg-accent/90 text-primary">
+                <Button onClick={() => globalThis.location.href = "https://invas.me"}className="w-full bg-accent hover:bg-accent/90 text-primary">
                   Go to Dashboard
                 </Button>
                 <Button  onClick={() => router.push("/")}  variant="outline" className="w-full">

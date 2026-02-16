@@ -47,7 +47,7 @@ export default function PaymentModal({
         lastName: userData.lastName || "",
         email: userData.email || "",
         phone: userData.phone || "",
-        company: userData.company || "",
+        company: userData.companyName || "",
         address: userData.address || "",
         // paymentMethod: PAYMENT_METHOD.CARD,
       })
@@ -150,12 +150,12 @@ export default function PaymentModal({
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="company">Company (Optional)</Label>
-              <Input id="company" name="company" value={formData.company} onChange={handleChange} className="border-[#0059c6]" disabled={!!userData?.company}/>
+              <Input id="company" name="company" value={formData.company} onChange={handleChange} className="border-[#0059c6]" />
             </div>
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="address">Address (Optional)</Label>
-              <Input id="address" name="address" value={formData.address} onChange={handleChange} className="border-[#0059c6]" disabled={!!userData?.address}/>
+              <Input id="address" name="address" value={formData.address} onChange={handleChange} className="border-[#0059c6]"/>
             </div>
 
             <div className="flex gap-4 pt-4">

@@ -7,7 +7,7 @@ import PricingCard from "@/components/pricing-card"
 import PaymentModal from "@/components/payment-modal"
 import { fetchPlans } from "@/lib/api-client"
 import { Loader } from "lucide-react"
-import { getDemoPlans, PLAN} from "@/lib/constants"
+import { getDemoPlans, PLAN } from "@/lib/constants"
 import { UserData, PcGlobalPaymentDetails } from "@/lib/types"
 
 interface PricingPageProps {
@@ -16,7 +16,7 @@ interface PricingPageProps {
   disabled?: boolean
 }
 
-export default function PricingPage({ userData, paymentDetails, disabled }: PricingPageProps) {
+export default function PricingPage({ userData, paymentDetails, disabled }: Readonly<PricingPageProps>) {
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annually">("monthly")
   const [plans, setPlans] = useState<PLAN[]>([])
   const [loading, setLoading] = useState(true)
@@ -76,15 +76,15 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Pric
 
   const getYearlyPrice = (monthlyPrice: number | string): number => {
     // Convert to number if it's a string
-    const numericPrice = typeof monthlyPrice === 'string' ? parseFloat(monthlyPrice) : monthlyPrice
+    const numericPrice = typeof monthlyPrice === 'string' ? Number.parseFloat(monthlyPrice) : monthlyPrice
     
     // Return 0 if invalid, otherwise calculate yearly with 17% discount
-    if (isNaN(numericPrice)) return 0
+    if (Number.isNaN(numericPrice)) return 0
     return Math.floor(numericPrice * 10) // 17% discount for yearly
   }
 
   const handleSelectPlan = (plan: PLAN) => {
-    const baseAmount = typeof plan.amount === 'string' ? parseFloat(plan.amount) : plan.amount
+    const baseAmount = typeof plan.amount === 'string' ? Number.parseFloat(plan.amount) : plan.amount
     const finalAmount = billingPeriod === "annually" ? getYearlyPrice(plan.amount) : baseAmount
     
     setSelectedPlan({

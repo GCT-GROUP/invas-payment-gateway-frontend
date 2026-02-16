@@ -56,7 +56,7 @@ export interface PcGlobalPaymentDetails {
     id: string,
     email: string,
     name: string,
-    phone?: string,
+    phone_number?: string,
     company?: string,
     address?: string,
     city?: string,

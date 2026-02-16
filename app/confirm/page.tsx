@@ -248,7 +248,7 @@ export default function SuccessPage() {
                 <Button onClick={() => globalThis.location.href = "https://invas.me"}className="w-full bg-accent hover:bg-accent/90 text-primary">
                   Go to Dashboard
                 </Button>
-                <Button  onClick={() => router.push("/")}  variant="outline" className="w-full">
+                <Button  onClick={() => router.push("https://invas.me/")}  variant="outline" className="w-full">
                   Back to Home
                 </Button>
               </>
@@ -280,7 +280,7 @@ export default function SuccessPage() {
                     "Refresh Status"
                   )}
                 </Button>
-                <Button  onClick={() => router.push("/")}  variant="outline" className="w-full">
+                <Button  onClick={() => router.push("https://invas.me/")}  variant="outline" className="w-full">
                   <Home className="w-4 h-4 mr-2" />
                   Back to Home
                 </Button>

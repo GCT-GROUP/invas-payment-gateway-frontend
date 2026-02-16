@@ -10,7 +10,7 @@ import { Plan,
 
 export async function validateToken(token:string): Promise<ValidateTokenResponse>{
   try {
-    const response = await fetch(`${API_CONFIG.PC_BASE_URL}/validate/${token}`, {
+    const response = await fetch(`${API_CONFIG.PC_BASE_URL}/customers/validate/${token}`, {
       method: "GET",
       headers: {
         "X-API-Key": API_CONFIG.PC_API_KEY || "",

@@ -31,11 +31,10 @@ export default function TokenPage() {
 
             // Validate and decode the token
             const response = await validateToken(token)
-            console.log(response)
 
             if (response.success && response.data) {
                 setUserData(response.data.customer)
-                setPaymentDetails(response.data.payment)
+                setPaymentDetails(response.data.paymentLinkData)
             } else {
                 setError(response.message || "Invalid or expired token")
             }

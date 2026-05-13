@@ -47,7 +47,7 @@ export default function PaymentModal({
         lastName: userData.lastName || "",
         email: userData.email || "",
         phone: userData.phone || "",
-        company: userData.companyName || "",
+        company: userData.companyName || userData.company || "",
         address: userData.address || "",
         // paymentMethod: PAYMENT_METHOD.CARD,
       })

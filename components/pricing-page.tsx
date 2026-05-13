@@ -31,26 +31,37 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
   }, [])
 
   // Auto-select plan and open modal after plans are loaded
+  // useEffect(() => {
+  //   // Only proceed if plans are loaded and we have a planId
+  //   if (!loading && plans.length > 0 && userData?.planId && userData.planId !== "") {
+  //     const plan = getPlanById(userData.planId)
+  //     setBillingPeriod(userData.billingCycle as "monthly" | "annually")
+  //     if (plan) {
+  //       // Auto-select the plan and open modal
+  //       handleSelectPlan(plan)
+  //     }
+  //   }
+  // }, [loading, plans, userData?.planId])
+
   useEffect(() => {
-    // Only proceed if plans are loaded and we have a planId
-    if (!loading && plans.length > 0 && userData?.planId && userData.planId !== "") {
-      const plan = getPlanById(userData.planId)
-      setBillingPeriod(userData.billingCycle as "monthly" | "annually")
+    if (!loading && plans.length > 0 && paymentDetails?.metadata?.plan && paymentDetails?.metadata?.cycle) {
+      const plan = plans.find(p => p.name === paymentDetails.metadata.plan)
+      // const plan = getPlanById(userData.planId)
+      setBillingPeriod(paymentDetails.metadata.cycle as "monthly" | "annually")
       if (plan) {
-        // Auto-select the plan and open modal
         handleSelectPlan(plan)
       }
     }
-  }, [loading, plans, userData?.planId])
+  }, [loading, plans, paymentDetails?.metadata?.plan, paymentDetails?.metadata?.cycle])
 
-  const getPlanById = (id: string): PLAN | null => {
-    const plan = plans.find(plan => plan.id === id)
-    if (!plan) {
-      console.log(`Plan with ID ${id} not found`)
-      return null
-    }
-    return plan
-  }
+  // const getPlanById = (id: string): PLAN | null => {
+  //   const plan = plans.find(plan => plan.id === id)
+  //   if (!plan) {
+  //     console.log(`Plan with ID ${id} not found`)
+  //     return null
+  //   }
+  //   return plan
+  // }
 
   const loadPlans = async () => {
     try {

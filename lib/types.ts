@@ -225,7 +225,7 @@ export interface ValidateTokenResponse {
       planId?: string
       billingCycle?: string
     }
-    payment: PcGlobalPaymentDetails
+    paymentLinkData: PcGlobalPaymentDetails
     // payment: {
     //   payment_link_id: number,
     //   token: string,

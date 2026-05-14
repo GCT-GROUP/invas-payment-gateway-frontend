@@ -101,7 +101,7 @@ export default function PaymentModal({
         {/* Header */}
         <div className="sticky top-0 bg-card border-b dark:border-primary p-6 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-foreground">Complete Payment</h2>
-          <Button onClick={onClose} variant="ghost" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Button onClick={onClose} variant="ghost" className="text-muted-foreground hover:text-foreground transition-colors hover:bg-transparent hover:border hover:border-[#0F3633]">
             <X className="w-6 h-6" />
           </Button>
         </div>
@@ -159,10 +159,10 @@ export default function PaymentModal({
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={loading}>
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1 hover:border hover:border-red-600 hover:bg-transparent hover:text-red-600" disabled={loading}>
                 Cancel
               </Button>
-              <Button type="submit" className="flex-1 bg-accent hover:bg-accent/90 text-primary" disabled={loading}>
+              <Button type="submit" className="flex-1 bg-gradient-to-r from-[#08D000] to-[#0F3633] hover:from-[#0F3633] hover:to-[#0F3633] text-white" disabled={loading}>
                 {loading ? "Processing..." : "Proceed to Payment"}
               </Button>
             </div>

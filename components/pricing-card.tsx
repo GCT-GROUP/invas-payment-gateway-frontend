@@ -10,23 +10,17 @@ interface PricingCardProps {
   billingPeriod: "monthly" | "annually"
   yearlyPrice?: number
   disabled?: boolean
-  isSelected?: boolean
+  // isSelected?: boolean
 }
 
 export default function PricingCard({ 
-  plan, 
-  isPopular, 
-  onSelect, 
-  billingPeriod, 
-  yearlyPrice,
-  disabled,
-  isSelected = false
-}: PricingCardProps) {
+  plan, isPopular, onSelect, billingPeriod, yearlyPrice,disabled
+}: Readonly<PricingCardProps>) {
   const featureList = Array.isArray(plan.features) ? plan.features : Object.keys(plan.features)
 
   const rawPrice = billingPeriod === "annually" && yearlyPrice ? yearlyPrice : plan.amount
-  const numericPrice = typeof rawPrice === 'string' ? parseFloat(rawPrice) : rawPrice
-  const displayPrice = isNaN(numericPrice) ? 0 : numericPrice
+  const numericPrice = typeof rawPrice === 'string' ? Number.parseFloat(rawPrice) : Number(rawPrice)
+  const displayPrice = Number.isNaN(numericPrice) ? 0 : numericPrice
   // const displayPrice = billingPeriod === "annually" && yearlyPrice ? yearlyPrice : plan.amount
   
   return (
@@ -39,7 +33,7 @@ export default function PricingCard({
     >
       {isPopular && (
         <div className="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 z-10">
-          <span className="bg-accent text-primary px-3 py-1 sm:px-4 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
+          <span className="bg-[#0F3633] text-white px-3 py-1 sm:px-4 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap">
             Most Popular
           </span>
         </div>
@@ -54,7 +48,7 @@ export default function PricingCard({
         {/* Price */}
         <div className="mb-4 sm:mb-6">
           <div className="flex items-baseline flex-wrap gap-1">
-            <span className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text">
+            <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F3633]">
               ₦{displayPrice.toLocaleString()}
             </span>
             <span className="text-sm sm:text-base text-muted-foreground">
@@ -71,11 +65,12 @@ export default function PricingCard({
         {/* CTA Button */}
         <Button
           onClick={onSelect}
-          className={`w-full mb-6 sm:mb-8 h-10 sm:h-11 text-sm sm:text-base ${
-            isPopular
-              ? "bg-primary hover:bg-primary/90 text-primary-foreground"
-              : "bg-accent hover:bg-accent/90 text-primary"
-          }`}
+          className="w-full mb-6 sm:mb-8 h-10 sm:h-11 text-sm sm:text-base bg-gradient-to-r from-[#08D000] to-[#0F3633] hover:from-[#0F3633] hover:to-[#08D000] "
+          // className={`w-full mb-6 sm:mb-8 h-10 sm:h-11 text-sm sm:text-base ${
+          //   isPopular
+          //     ? "bg-primary hover:bg-primary/90 text-primary-foreground"
+          //     : "bg-accent hover:bg-accent/90 text-primary"
+          // }`}
           disabled={disabled}
         >
           Select Plan
@@ -93,7 +88,7 @@ export default function PricingCard({
           )}
           
           {featureList.map((feature, index) => (
-            <div key={index} className="flex items-start gap-2 sm:gap-3">
+            <div key={index.toFixed()} className="flex items-start gap-2 sm:gap-3">
               <Check className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0 mt-0.5" />
               <span className="text-sm sm:text-base text-foreground leading-relaxed">
                 {feature}

@@ -7,7 +7,7 @@ interface PricingToggleProps {
   onToggle: (period: "monthly" | "annually") => void
 }
 
-export default function PricingToggle({ billingPeriod, onToggle }: PricingToggleProps) {
+export default function PricingToggle({ billingPeriod, onToggle }: Readonly<PricingToggleProps>) {
   return (
     <div className="flex items-center justify-center gap-2 md:gap-4 flex-wrap">
       <Button
@@ -17,14 +17,14 @@ export default function PricingToggle({ billingPeriod, onToggle }: PricingToggle
       >
         Monthly
       </Button>
-      <span className="text-sm font-medium text-accent">|</span>
+      <span className="text-sm font-medium text-[#0F3633]">|</span>
       <Button
         variant={billingPeriod === "annually" ? "default" : "outline"}
         onClick={() => onToggle("annually")}
         className={billingPeriod === "annually" ? "bg-primary text-primary-foreground" : "border border-primary dark:border-primary dark:hover:text-[#0059c6]"}
       >
         Yearly
-        <span className="ml-2 text-xs bg-accent text-primary px-2 py-0.5 rounded border border-primary">Save 17%</span>
+        <span className="ml-2 text-xs bg-[#0F3633] text-white px-2 py-0.5 rounded border border-primary">Save 17%</span>
       </Button>
     </div>
   )

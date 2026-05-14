@@ -245,7 +245,7 @@ export default function SuccessPage() {
           <div className="flex flex-col gap-3">
             {paymentDetails?.status === PAYMENT_STATUS.SUCCESS && (
               <>
-                <Button onClick={() => globalThis.location.href = "https://invas.me"}className="w-full bg-accent hover:bg-accent/90 text-primary">
+                <Button onClick={() => globalThis.location.href = "https://invas.me"}className="w-full bg-[#0F3633] hover:bg-[#0F3633]/90 text-white">
                   Go to Dashboard
                 </Button>
                 {/* <Button  onClick={() => router.push("https://invas.me/")}  variant="outline" className="w-full">
@@ -256,7 +256,7 @@ export default function SuccessPage() {
 
             {paymentDetails?.status === PAYMENT_STATUS.FAILED && (
               <>
-                <Button onClick={() => router.push("/#pricing")} className="w-full bg-accent hover:bg-accent/90 text-primary">
+                <Button onClick={() => router.push("/#pricing")} className="w-full bg-[#0F3633] hover:bg-[#0F3633]/90 text-white">
                   Try Again
                 </Button>
                 <Link href={`mailto:${SUPPORT_EMAIL}`}>
@@ -270,7 +270,7 @@ export default function SuccessPage() {
 
             {(paymentDetails?.status === PAYMENT_STATUS.PENDING || paymentDetails?.status === PAYMENT_STATUS.PROCESSING) && (
               <>
-                <Button  onClick={handleManualRefresh}  className="w-full bg-accent hover:bg-accent/90 text-primary" disabled={isRefreshing}>
+                <Button  onClick={handleManualRefresh}  className="w-full bg-[#0F3633] hover:bg-[#0F3633]/90 text-white" disabled={isRefreshing}>
                   {isRefreshing ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />

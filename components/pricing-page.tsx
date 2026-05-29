@@ -47,7 +47,8 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
     if (!loading && plans.length > 0 && paymentDetails?.metadata?.plan && paymentDetails?.metadata?.cycle) {
       const plan = plans.find(p => p.name === paymentDetails.metadata.plan)
       // const plan = getPlanById(userData.planId)
-      setBillingPeriod(paymentDetails.metadata.cycle as "monthly" | "annually")
+      const cycle = paymentDetails.metadata.cycle === "yearly" ? "annually" : paymentDetails.metadata.cycle as "monthly" | "annually"
+      setBillingPeriod(cycle)
       if (plan) {
         handleSelectPlan(plan)
       }
@@ -148,7 +149,7 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
                 billingPeriod={billingPeriod}
                 yearlyPrice={getYearlyPrice(plan.amount)}
                 disabled={disabled}
-                isSelected={userData?.planId === plan.id}
+                // isSelected={userData?.planId === plan.id}
               />
             ))}
           </div>

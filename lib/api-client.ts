@@ -31,7 +31,7 @@ export async function validateToken(token:string): Promise<ValidateTokenResponse
 
 export async function postFetchCustomer(metadata?: CustomerData): Promise<CustomerVerifyResponse> {
   try {
-    console.log("metadata", metadata);
+    // console.log("metadata", metadata);
     const response = await fetch(`${API_CONFIG.BASE_URL}/customers`, {
       method: "POST",
       headers: {

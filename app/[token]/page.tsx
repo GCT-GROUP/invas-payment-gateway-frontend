@@ -35,7 +35,6 @@ export default function TokenPage() {
             if (response.success && response.data) {
                 setUserData(response.data.customer)
                 setPaymentDetails(response.data.paymentLinkData)
-                console.log(paymentDetails);
             } else {
                 setError(response.message || "Invalid or expired token")
             }
@@ -46,6 +45,7 @@ export default function TokenPage() {
             setLoading(false)
         }
     }
+    console.log("payment ",paymentDetails);
 
     // Show loading state
     if (loading) {

@@ -23,7 +23,8 @@ export default function PaymentModal({
   billing,
   onClose, 
   onSuccess,
-  userData 
+  userData,
+  paymentDetails
 }: Readonly<PaymentModalProps>) {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -46,8 +47,8 @@ export default function PaymentModal({
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
         email: userData.email || "",
-        phone: userData.phone || "",
-        company: userData.companyName || userData.company || "",
+        phone: userData.phone || paymentDetails?.user.phone_number || "",
+        company: userData.companyName || userData.company || paymentDetails?.business.name || "",
         address: userData.address || "",
         // paymentMethod: PAYMENT_METHOD.CARD,
       })

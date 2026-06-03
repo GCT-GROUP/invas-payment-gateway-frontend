@@ -56,14 +56,14 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
   }
 
   const getYearlyPrice = (monthlyPrice: number | string): number => {
-    const numericPrice = typeof monthlyPrice === "string" ? parseFloat(monthlyPrice) : monthlyPrice
-    if (isNaN(numericPrice)) return 0
+    const numericPrice = typeof monthlyPrice === "string" ? Number.parseFloat(monthlyPrice) : monthlyPrice
+    if (Number.isNaN(numericPrice)) return 0
     return Math.floor(numericPrice * 10)
   }
 
   const handleSelectPlan = (plan: PLAN, overrideBilling?: "monthly" | "annually") => {
     const activeBilling = overrideBilling ?? billingPeriod
-    const baseAmount = typeof plan.amount === "string" ? parseFloat(plan.amount) : plan.amount
+    const baseAmount = typeof plan.amount === "string" ? Number.parseFloat(plan.amount) : plan.amount
     const finalAmount = activeBilling === "annually" ? getYearlyPrice(plan.amount) : baseAmount
 
     setSelectedPlan({ ...plan, amount: finalAmount })

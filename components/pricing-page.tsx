@@ -42,12 +42,12 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
   //     }
   //   }
   // }, [loading, plans, userData?.planId])
-
   useEffect(() => {
     if (!loading && plans.length > 0 && paymentDetails?.metadata?.plan && paymentDetails?.metadata?.cycle) {
       const plan = plans.find(p => p.name === paymentDetails.metadata.plan)
       // const plan = getPlanById(userData.planId)
       const cycle = paymentDetails.metadata.cycle === "yearly" ? "annually" : paymentDetails.metadata.cycle as "monthly" | "annually"
+      console.log("CYSCLEEEE ::  ",cycle)
       setBillingPeriod(cycle)
       if (plan) {
         handleSelectPlan(plan)
@@ -110,6 +110,7 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
     // Redirect to success page or dashboard
     router.push(`/confirm?transaction=${transactionId}`)
   }
+  console.log("PLAN:: ", selectedPlan)
 
   return (
     <section id="pricing" className="py-10 md:py-14 px-4 sm:px-6 lg:px-8">

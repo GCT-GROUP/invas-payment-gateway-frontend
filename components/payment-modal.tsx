@@ -61,7 +61,7 @@ export default function PaymentModal({
       [e.target.name]: e.target.value,
     }))
   }
-
+  console.log("cHECKING pLAN ", plan )
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -112,7 +112,15 @@ export default function PaymentModal({
           <div className="bg-accent/10 border border-accent rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-foreground mb-2">{plan.name}</h3>
             <p className="text-2xl font-bold text-accent">
-              ₦{typeof plan.amount === 'number' ? plan.amount.toLocaleString() : plan.amount}
+              {/* ₦{typeof plan.amount === 'number' ? plan.amount.toLocaleString() : plan.amount} */}
+              ₦{Number(plan?.amount).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+              })}
+              {/* ₦{Number(paymentDetails?.amount).toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+              })} */}
               {/* ₦{calculateBilledAmount().toLocaleString()} */}
               {billing === "annually" && " (17% discount)"}
             </p>

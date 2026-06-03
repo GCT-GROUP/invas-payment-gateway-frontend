@@ -47,7 +47,7 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
       const plan = plans.find(p => p.name === paymentDetails.metadata.plan)
       // const plan = getPlanById(userData.planId)
       const cycle = paymentDetails.metadata.cycle === "yearly" ? "annually" : paymentDetails.metadata.cycle as "monthly" | "annually"
-      console.log("CYSCLEEEE ::  ",cycle)
+      console.log("CYCLEEEE ::  ",cycle)
       setBillingPeriod(cycle)
       if (plan) {
         handleSelectPlan(plan)
@@ -98,7 +98,8 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
   const handleSelectPlan = (plan: PLAN) => {
     const baseAmount = typeof plan.amount === 'string' ? Number.parseFloat(plan.amount) : plan.amount
     const finalAmount = billingPeriod === "annually" ? getYearlyPrice(plan.amount) : baseAmount
-    
+    console.log("BaseAmount: ", baseAmount);
+    console.log("finalAmount: ", finalAmount);
     setSelectedPlan({
       ...plan,
       amount: finalAmount,
@@ -110,8 +111,7 @@ export default function PricingPage({ userData, paymentDetails, disabled }: Read
     // Redirect to success page or dashboard
     router.push(`/confirm?transaction=${transactionId}`)
   }
-  console.log("PLAN:: ", selectedPlan)
-
+  
   return (
     <section id="pricing" className="py-10 md:py-14 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1350px] mx-auto px-8">

@@ -45,7 +45,6 @@ export default function TokenPage() {
             setLoading(false)
         }
     }
-    console.log("payment ",paymentDetails);
 
     // Show loading state
     if (loading) {

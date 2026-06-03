@@ -61,7 +61,6 @@ export default function PaymentModal({
       [e.target.name]: e.target.value,
     }))
   }
-  console.log("cHECKING pLAN ", plan )
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)

@@ -52,7 +52,6 @@ export default function SuccessPage() {
       const response = await verifyPayment(transactionId)
 
       if (response.success && response.data) {
-        // console.log("Payment details:", response.data)
         setPaymentDetails(response.data)
         setError(null)
       } else {

@@ -244,7 +244,7 @@ export default function SuccessPage() {
           <div className="flex flex-col gap-3">
             {paymentDetails?.status === PAYMENT_STATUS.SUCCESS && (
               <>
-                <Button onClick={() => globalThis.location.href = "https://invas.me"}className="w-full bg-[#0F3633] hover:bg-[#0F3633]/90 text-white">
+                <Button onClick={() => globalThis.location.href = "https://invas.me/plans"}className="w-full bg-[#0F3633] hover:bg-[#0F3633]/90 text-white">
                   Go to Dashboard
                 </Button>
                 {/* <Button  onClick={() => router.push("https://invas.me/")}  variant="outline" className="w-full">

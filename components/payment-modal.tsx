@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X } from "lucide-react"
+import { Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -109,21 +109,35 @@ export default function PaymentModal({
         <div className="p-6">
           {/* Plan Summary */}
           <div className="bg-accent/10 border border-accent rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-foreground mb-2">{plan.name}</h3>
+            <h3 className="font-semibold text-foreground mb-1">{plan.name}</h3>
             <p className="text-2xl font-bold text-accent">
-              {/* ₦{typeof plan.amount === 'number' ? plan.amount.toLocaleString() : plan.amount} */}
-              ₦{Number(plan?.amount).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-              })}
-              {/* ₦{Number(paymentDetails?.amount).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-              })} */}
-              {/* ₦{calculateBilledAmount().toLocaleString()} */}
-              {billing === "annually" && " (17% discount)"}
+              <span className="font-bold mr-1">₦{Number(plan?.amount + (plan?.amount * 0.075) ).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                })}
+              </span>              
             </p>
-            <p className="text-sm text-foreground mt-1">Billed {billing} {billing === "annually" && " (17% discount)"}</p>
+            <p className="flex items-center text-md font-medium text-foreground mt-1">
+              <span className="font-bold">
+                ₦{Number(plan?.amount).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+              </span>
+              <span className="flex items-center gap-1 text-sm font-normal ml-1">
+                {/* Add 7.5% VAT to the amount */}
+                plus
+                <span className="font-bold">
+                  ₦{Number(plan?.amount * 0.075).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span> (VAT)
+              </span>
+            </p>
+            <p className="text-sm text-foreground mt-1">
+              Billed {billing} {billing === "annually" && " (17% discount)"}
+            </p>
           </div>
 
           {/* Error Message */}
